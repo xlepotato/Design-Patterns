@@ -22,6 +22,10 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
 
     private EditText email;
     private EditText username;
+
+    private String email_str;
+    private String username_str;
+
     private Context context;
     private int pos;
     private boolean on_create_update = true;
@@ -42,25 +46,10 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
 
     public void saveContact(View view) {
 
-        String email_str = email.getText().toString();
+        email_str = email.getText().toString();
+        username_str = username.getText().toString();
 
-        if (email_str.equals("")) {
-            email.setError("Empty field!");
-            return;
-        }
-
-        if (!email_str.contains("@")) {
-            email.setError("Must be an email address!");
-            return;
-        }
-
-        String username_str = username.getText().toString();
-
-        // Check that username is unique AND username is changed (Note: if username was not changed
-        // then this should be fine, because it was already unique.)
-        if (!contact_list_controller.isUsernameAvailable(username_str) &&
-                !(contact_controller.getUsername().equals(username_str))){
-            username.setError("Username already taken!");
+        if (!validateInput()) {
             return;
         }
 
@@ -117,4 +106,27 @@ public class EditContactActivity extends AppCompatActivity implements Observer {
             email.setText(contact_controller.getEmail());
         }
     }
+
+    public boolean validateInput() {
+        // Input validation goes here...
+        if (email_str.equals("")) {
+            email.setError("Empty field!");
+            return false;
+        }
+
+        if (!email_str.contains("@")) {
+            email.setError("Must be an email address!");
+            return false;
+        }
+
+        // Check that username is unique AND username is changed (Note: if username was not changed
+        // then this should be fine, because it was already unique.)
+        if (!contact_list_controller.isUsernameAvailable(username_str) &&
+                !(contact_controller.getUsername().equals(username_str))){
+            username.setError("Username already taken!");
+            return false;
+        }
+        return true;
+    }
+
 }
